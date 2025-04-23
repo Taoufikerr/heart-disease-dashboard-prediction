@@ -149,4 +149,3 @@ if page == "🤖 Full Prediction Interface":
         st.warning("Patient may be at cardiovascular risk. Further testing advised.")
     else:
         st.success("These values indicate low risk for heart disease.")
-""")
