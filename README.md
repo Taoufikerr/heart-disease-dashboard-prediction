@@ -76,6 +76,3 @@ LinkedIn: https://www.linkedin.com/in/taoufik-errajraji13/
 
 ---
 
-## 📫 Acknowledgements
-
-Special thanks to **Mr. Omar Kella** for his guidance and for providing the foundation and inspiration to take this project further.
