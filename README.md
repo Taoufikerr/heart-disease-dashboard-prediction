@@ -1,69 +1,30 @@
-# 🫀 Heart Disease Dashboard & Prediction
+# Heart Disease Dashboard & Prediction
 
-This project is an interactive Streamlit web application for exploring heart disease data, visualizing health indicators, and making live predictions using a logistic regression model.
+This project is a Streamlit-based web application for visualizing and predicting heart disease.
 
-🔗 **[Launch the App](https://heart-disease-dashboard-prediction-ne9gndgqtwhumohyvpdqmm.streamlit.app/)**
+## Features
 
----
+- 📊 Interactive dashboard with filters, KPIs, and charts
+- 🧠 Inline and full-form heart disease predictions
+- ✅ Logistic Regression model with live results
+- 💾 Downloadable filtered data
+- 📈 Histogram, boxplot, pie chart visualizations
 
-## 📊 Features
+## Live App
 
-- **Data Dashboard**
-  - Interactive filters by sex, chest pain type, and date
-  - KPI metrics: average age, cholesterol, heart disease percentage
-  - Visual insights: histograms, boxplots, pie charts
-  - AI-style interpretation panel
+Access it here:  
+https://heart-disease-dashboard-prediction-ne9gndgqtwhumohyvpdqmm.streamlit.app/
 
-- **Inline Prediction**
-  - Input fields directly in the dashboard
-  - Instant prediction with confidence score
-
-- **Full Prediction Interface**
-  - Dedicated tab with all input features
-  - Consistent model results and intelligent explanations
-
----
-
-## 🧠 Model
-
-- **Type:** Logistic Regression
-- **Preprocessing:** StandardScaler
-- **Dataset:** Heart disease data (`heart.csv`) with custom `date_exam` column
-
----
-
-## 🚀 Running the App Locally
+## How to Run Locally
 
 ```bash
-# 1. Clone the repo
-git clone https://github.com/your-username/heart-disease-dashboard.git
-cd heart-disease-dashboard
-
-# 2. Install dependencies
+git clone https://github.com/Taoufikerr/heart-disease-dashboard-prediction
+cd heart-disease-dashboard-prediction
 pip install -r requirements.txt
-
-# 3. Run the app
 streamlit run app.py
 ```
 
----
-
-## 📂 Files
-
-- `app.py` – main Streamlit app
-- `heart.csv` – dataset with patient records
-- `README.md` – project documentation
-
----
-
-## 👨‍💻 Author
+## Author
 
 **Taoufik Errajraji**  
-[LinkedIn](https://www.linkedin.com/in/taoufik-errajraji13/)
-
----
-
-## 🌐 Deployed App
-
-> Click below to try the app live:  
-🔗 [https://heart-disease-dashboard-prediction-ne9gndgqtwhumohyvpdqmm.streamlit.app/](https://heart-disease-dashboard-prediction-ne9gndgqtwhumohyvpdqmm.streamlit.app/)
+[LinkedIn Profile](https://www.linkedin.com/in/taoufik-errajraji13/)
