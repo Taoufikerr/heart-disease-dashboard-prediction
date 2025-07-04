@@ -18,7 +18,8 @@ def load_data():
 # --- Train Model ---
 @st.cache_resource
 def train_model(df):
-    X = df.drop(columns=["target", "date_exam"])
+    cols_to_drop = [col for col in ["target", "date_exam"] if col in df.columns]
+    X = df.drop(columns=cols_to_drop)
     y = df["target"]
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
