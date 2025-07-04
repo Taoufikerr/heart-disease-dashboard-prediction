@@ -11,10 +11,10 @@ from sklearn.preprocessing import StandardScaler
 @st.cache_data
 def load_data():
     df = pd.read_csv("heart.csv")
-if "date_exam" in df.columns:
-    df["date_exam"] = pd.to_datetime(df["date_exam"])
+    if "date_exam" in df.columns:
+        df["date_exam"] = pd.to_datetime(df["date_exam"])
     return df
-
+    
 # --- Train Model ---
 @st.cache_resource
 def train_model(df):
