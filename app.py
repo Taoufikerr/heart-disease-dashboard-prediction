@@ -11,20 +11,29 @@ from sklearn.preprocessing import StandardScaler
 @st.cache_data
 def load_data():
     df = pd.read_csv("heart.csv")
-    if "date_exam" in df.columns:
+    # Optional: simulate exam date if needed
+    if "date_exam" not in df.columns:
+        df["date_exam"] = pd.date_range(start="2022-01-01", periods=len(df), freq="D")
+    else:
         df["date_exam"] = pd.to_datetime(df["date_exam"])
     return df
-    
+
 # --- Train Model ---
 @st.cache_resource
 def train_model(df):
     cols_to_drop = [col for col in ["target", "date_exam"] if col in df.columns]
     X = df.drop(columns=cols_to_drop)
     y = df["target"]
+
+    # One-hot encode categorical variables
+    X = pd.get_dummies(X, drop_first=True)
+
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
+
     model = LogisticRegression()
     model.fit(X_scaled, y)
+
     return model, scaler
 
 # --- Label Mappings ---
@@ -49,21 +58,19 @@ if page == "📊 Dashboard":
     st.title("Heart Disease Dashboard")
     st.caption(f"Available exam dates: {df['date_exam'].min().date()} to {df['date_exam'].max().date()}")
 
-    # Sidebar Filters
     sex_label = st.sidebar.selectbox("Sex", ["Male", "Female"])
     sex_filter = 1 if sex_label == "Male" else 0
     target_filter = st.sidebar.selectbox("Heart Disease", ["All", "Positive", "Negative"])
     cp_filter = st.sidebar.selectbox("Chest Pain Type", ["All"] + list(cp_options.keys()))
     date_range = st.sidebar.date_input("Exam Date Range", [df["date_exam"].min(), df["date_exam"].max()])
 
-    # Apply filters
     if isinstance(date_range, (list, tuple)) and len(date_range) == 2:
         filtered_df = df[
             (df["date_exam"] >= pd.to_datetime(date_range[0])) &
             (df["date_exam"] <= pd.to_datetime(date_range[1]))
         ]
     else:
-        st.warning("Please select a valid date range (start and end).")
+        st.warning("Please select a valid date range.")
         filtered_df = df.iloc[0:0]
 
     filtered_df = filtered_df[filtered_df["sex"] == sex_filter]
@@ -72,13 +79,11 @@ if page == "📊 Dashboard":
     if cp_filter != "All":
         filtered_df = filtered_df[filtered_df["cp"] == cp_options[cp_filter]]
 
-    # KPIs
     col1, col2, col3 = st.columns(3)
     col1.metric("Average Age", f"{filtered_df['age'].mean():.1f}")
     col2.metric("Avg Cholesterol", f"{filtered_df['chol'].mean():.1f} mg/dL")
     col3.metric("Heart Disease %", f"{filtered_df['target'].mean() * 100:.1f} %")
 
-    # Insights
     st.subheader("AI-Style Insights")
     if filtered_df.empty:
         st.warning("No data available for the selected filters.")
@@ -93,7 +98,6 @@ if page == "📊 Dashboard":
         for tip in insights:
             st.markdown(f"- {tip}")
 
-    # Histograms
     st.subheader("Distributions")
     if not filtered_df.empty:
         fig, axs = plt.subplots(2, 3, figsize=(14, 7))
@@ -107,12 +111,10 @@ if page == "📊 Dashboard":
     else:
         st.warning("No data to show for charts.")
 
-    # Extra visuals
     st.plotly_chart(px.histogram(filtered_df, x="ca", color=filtered_df["target"].map({0: "No Disease", 1: "Disease"}), barmode="group"))
     st.plotly_chart(px.pie(filtered_df, names=filtered_df["fbs"].map({0: "FBS ≤ 120", 1: "FBS > 120"})))
     st.plotly_chart(px.box(filtered_df, x="target", y="chol", color=filtered_df["target"].map({0: "No Disease", 1: "Disease"})))
 
-    # Inline prediction
     st.subheader("Inline Prediction")
     with st.form("inline_form"):
         age = st.slider("Age", 20, 80, 50)
@@ -132,8 +134,9 @@ if page == "📊 Dashboard":
         if submit:
             features = np.array([[age, sex, cp, trestbps, chol, fbs, restecg,
                                   thalach, exang, oldpeak, slope, ca, thal]])
-            prediction = model.predict(scaler.transform(features))[0]
-            prob = model.predict_proba(scaler.transform(features))[0][1]
+            features_encoded = pd.get_dummies(pd.DataFrame(features, columns=X.columns)).reindex(columns=X.columns, fill_value=0)
+            prediction = model.predict(scaler.transform(features_encoded))[0]
+            prob = model.predict_proba(scaler.transform(features_encoded))[0][1]
             st.success(f"Prediction: {'Heart Disease' if prediction == 1 else 'No Heart Disease'} | Confidence: {prob:.2f}")
 
 # --- FULL PREDICTION ---
@@ -157,9 +160,12 @@ if page == "🤖 Full Prediction Interface":
 
     features = np.array([[age, sex, cp, trestbps, chol, fbs, restecg,
                           thalach, exang, oldpeak, slope, ca, thal]])
-    prediction = model.predict(scaler.transform(features))[0]
-    prob = model.predict_proba(scaler.transform(features))[0][1]
+    features_encoded = pd.get_dummies(pd.DataFrame(features, columns=X.columns)).reindex(columns=X.columns, fill_value=0)
+
+    prediction = model.predict(scaler.transform(features_encoded))[0]
+    prob = model.predict_proba(scaler.transform(features_encoded))[0][1]
 
     st.subheader("Prediction Result")
     st.write("Heart Disease Risk:", "Yes" if prediction == 1 else "No")
     st.write(f"Confidence Score: {prob:.2f}")
+
