@@ -11,7 +11,7 @@ from sklearn.preprocessing import StandardScaler
 @st.cache_data
 def load_data():
     df = pd.read_csv("heart.csv")
-    if "date_exam" in df.columns:
+if "date_exam" in df.columns:
     df["date_exam"] = pd.to_datetime(df["date_exam"])
     return df
 
